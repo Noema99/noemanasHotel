@@ -14,11 +14,7 @@ const AppStack  = createStackNavigator();
 const AppNavigator =props=> {
   return (
    <NavigationContainer>
-
-     <AppStack.Navigator screenOptions={{
-            headerShown: false,
-            
-            }}>
+     <AppStack.Navigator screenOptions={{headerShown: false, }}>
        <AppStack.Screen name="Noema & Anas Hotel" component={OnboardingScreen}/>
        <AppStack.Screen name="Login" component={LoginScreen}/>
        <AppStack.Screen name="Signup" component={SignupScreen}/>

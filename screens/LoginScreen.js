@@ -6,10 +6,39 @@ import FormButton from '../components/FormButton';
 import SocialButton from '../components/SocialButton';
 
 import Icon  from 'react-native-vector-icons/FontAwesome';
+import auth, { firebase } from "@react-native-firebase/auth";
+
 
 const LoginScreen = ({navigation}) => {
     const [email, setEmail] = useState();
-    const [password, setPassword] = useState();
+  const [password, setPassword] = useState();
+ 
+  const __doSingIn = async (email, password) => {
+    try {
+      let response = await auth().signInWithEmailAndPassword(email, password)
+      if (response && response.user) {
+        console.log( "Authenticated successfully")
+      }
+    } catch (e) {
+      console.error(e.message)
+    }
+  }
+  
+  
+  /*componentDidMount() {
+    //  this.register("said1292@gmail.com", "123456");
+    this.__isTheUserAuthenticated();
+  }
+
+  __isTheUserAuthenticated = () => {
+    let user = firebase.auth().currentUser.uid;
+    if (user) {
+      console.log(tag,  user);
+      this.setState({ authenticated: true });
+    } else {
+      this.setState({ authenticated: false });
+    }
+  };*/ 
     return (
         <View style={styles.container}>
             <Image
@@ -37,7 +66,7 @@ const LoginScreen = ({navigation}) => {
 
       <FormButton
         buttonTitle="Sign In"
-        onPress={() => login(email, password)}
+        onPress={() => __doSingIn(email, password)}
       />
       <TouchableOpacity style={styles.forgotButton} onPress={() => {}}>
         <Text style={styles.navButtonText}>Forgot Password?</Text>

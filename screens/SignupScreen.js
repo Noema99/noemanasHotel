@@ -1,14 +1,53 @@
 import React, {useContext, useState} from 'react';
-import {View, Text, TouchableOpacity, Platform, StyleSheet} from 'react-native';
+import {View, Text, TouchableOpacity, Platform, StyleSheet, Button} from 'react-native';
 import FormInput from '../components/FormInput';
 import FormButton from '../components/FormButton';
 import SocialButton from '../components/SocialButton';
+import auth from "@react-native-firebase/auth";
+import { Alert } from 'react-native';
 
 const SignupScreen = ({navigation}) => {
     const [email, setEmail] = useState();
     const [password, setPassword] = useState();
     const [confirmPassword, setConfirmPassword] = useState();
-
+    const [error, setError] = useState("");
+    const [isValid, setValid] = useState(true);
+    
+  const __doSignUp = () => {
+      if (!email) {
+        setError("Email required *")
+        setValid(false)
+        return
+      } else if (!password && password.trim() && password.length > 6) {
+        setError("Weak password, minimum 5 chars")
+        setValid(false)
+        return
+      } else if (!confirmPassword && confirmPassword.trim()) {
+        setError("You need to confirm your password")
+        setValid(false)
+        return
+      }else if (confirmPassword !== password) {
+        Alert.alert("Passwords don't match");
+        setValid(false)
+        return
+      }
+  
+      __doCreateUser(email, password)
+    }
+  
+    const __doCreateUser = async (email, password) => {
+      try {
+        let response = await auth().createUserWithEmailAndPassword(
+          email,
+          password
+        )
+        if (response && response.user) {
+          Alert.alert("Success ✅", "Account created successfully")
+        }
+      } catch (e) {
+        console.error(e.message)
+      }
+    }
 
     
   return (
@@ -35,22 +74,23 @@ const SignupScreen = ({navigation}) => {
 
       <FormInput
         labelValue={confirmPassword}
-        onChangeText={(userPassword) => setPassword(userPassword)}
+        onChangeText={(userConfirmPassword) => setConfirmPassword(userConfirmPassword)}
         placeholderText="Confirm Password"
         iconType="lock"
         secureTextEntry={true}
       />
 
       <FormButton
-        buttonTitle="Sign Up"
-        onPress={() => register(email, password)}
+        buttonTitle="Sign Up!"
+        onPress={() => __doSignUp()}
       />
 
       <View style={styles.textPrivate}>
         <Text style={styles.color_textPrivate}>
           By registering, you confirm that you accept our{' '}
         </Text>
-        <TouchableOpacity onPress={() => alert('Terms Clicked!')}>
+        <TouchableOpacity onPress={() => <Button title="Be sure that this app respects Required by the law
+          Required by third party services Increases Transparency"/>}>
           <Text style={[styles.color_textPrivate, {color: '#e88832'}]}>
             Terms of service
           </Text>
